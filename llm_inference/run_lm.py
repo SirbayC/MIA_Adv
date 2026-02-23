@@ -632,9 +632,17 @@ def main():
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     pretrained = args.pretrain_dir
     if pretrained:
-        tokenizer = tokenizer_class.from_pretrained(pretrained, do_lower_case=args.do_lower_case)
+        tokenizer = tokenizer_class.from_pretrained(
+            pretrained,
+            do_lower_case=args.do_lower_case,
+            trust_remote_code=True,
+        )
         _dtype = torch.bfloat16 if getattr(args, 'bf16', False) else (torch.float16 if getattr(args, 'fp16', False) else None)
-        model = model_class.from_pretrained(pretrained, torch_dtype=_dtype)
+        model = model_class.from_pretrained(
+            pretrained,
+            torch_dtype=_dtype,
+            trust_remote_code=True,
+        )
     else:
         tokenizer = tokenizer_class.from_pretrained(args.tokenizer_dir, sep_token='<EOL>', bos_token='<s>', eos_token='</s>', pad_token='<pad>', unk_token='<|UNKNOWN|>', additional_special_tokens=special_tokens)
         args.vocab_size = len(tokenizer)
