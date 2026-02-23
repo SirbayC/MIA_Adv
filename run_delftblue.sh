@@ -86,6 +86,7 @@ python -u run_lm.py \
   --generate_method=top-k \
   --topk=50 \
   --temperature=0.8 \
+  --bf16 \
   --max_infer_samples=100
 
 cd "$REPO_DIR"
