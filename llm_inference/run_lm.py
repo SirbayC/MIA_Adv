@@ -400,7 +400,7 @@ def eval_line_completion(args, model, tokenizer, file_type='test'):
                     top_k=args.topk,
                     early_stopping=True,
                     temperature = args.temperature,
-                    eos_token_id = break_ids
+                    eos_token_id = tokenizer.eos_token_id
                     )
             else:
                 raise
