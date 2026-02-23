@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=CAV-MIA-AISE-research
-#SBATCH --partition=gpu-a100
+#SBATCH --partition=gpu-v100
 #SBATCH --time=00:30:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
@@ -23,9 +23,6 @@ SANTACODER_LOCAL_MODEL_PATH="$ROOT_DIR/models/santacoder"
 # Create output directory for this run
 OUTDIR="$ROOT_DIR/outputs/${SLURM_JOB_ID}"
 mkdir -p "$OUTDIR"
-
-# Tee all output to a run log inside OUTDIR as well
-exec > >(tee "$OUTDIR/run.log") 2>&1
 
 echo "=========================================="
 echo "Job ID:    $SLURM_JOB_ID"

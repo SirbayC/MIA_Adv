@@ -31,9 +31,9 @@ import json
 
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler,TensorDataset
+from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
-from dataset import TextDataset, finetuneDataset, EvalDataset, lineDataset
+from dataset import TextDataset, finetuneDataset, lineDataset
 from beam import Beam
 
 from fuzzywuzzy import fuzz
