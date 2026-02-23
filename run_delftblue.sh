@@ -8,6 +8,8 @@
 #SBATCH --gpus-per-task=1
 #SBATCH --mem-per-cpu=3982M
 #SBATCH --account=Education-EEMCS-Courses-CSE3000
+#SBATCH --output=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/logs/slurm-%j.out
+#SBATCH --error=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/logs/slurm-%j.err
 
 # Go to dir: /scratch/cosminvasilesc/MIA-RESEARCH/MIA_Adv
 
@@ -19,7 +21,7 @@ CONDA_ENV_PATH="$ROOT_DIR/ENV"
 SANTACODER_LOCAL_MODEL_PATH="$ROOT_DIR/models/santacoder"
 
 # Create output directory for this run
-OUTDIR="$ROOT_DIR/outputs/${SLURM_JOB_ID}"
+OUTDIR="$ROOT_DIR/outputs/runs/${SLURM_JOB_ID}"
 mkdir -p "$OUTDIR"
 
 echo "=========================================="
@@ -82,7 +84,7 @@ python -u run_lm.py \
   --generate_method=top-k \
   --topk=50 \
   --temperature=0.8 \
-  --bf16
+  --fp16
 
 cd "$REPO_DIR"
 
@@ -108,4 +110,10 @@ python classifier.py \
 echo "=========================================="
 echo "Job completed at: $(date)"
 echo "Results in: $OUTDIR"
+
+echo "Copying logs..."
+cp "$ROOT_DIR/outputs/logs/slurm-${SLURM_JOB_ID}.out" "$OUTDIR/"
+cp "$ROOT_DIR/outputs/logs/slurm-${SLURM_JOB_ID}.err" "$OUTDIR/"
+echo "Done!"
+
 echo "=========================================="
