@@ -8,8 +8,6 @@
 #SBATCH --gpus-per-task=1
 #SBATCH --mem-per-cpu=3982M
 #SBATCH --account=Education-EEMCS-Courses-CSE3000
-#SBATCH --output=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/%j/slurm.out
-#SBATCH --error=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/%j/slurm.err
 
 # Go to dir: /scratch/cosminvasilesc/MIA-RESEARCH/MIA_Adv
 
