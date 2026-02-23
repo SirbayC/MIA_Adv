@@ -2,28 +2,13 @@
 # Licensed under the MIT License.
 from __future__ import absolute_import, division, print_function
 
-import argparse
-import glob
-import logging
 import os
 import pickle
-import random
-import re
 import gc
-import shutil
 import json
 
-import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler,TensorDataset
-from torch.utils.data.distributed import DistributedSampler
-
-from transformers import (WEIGHTS_NAME, AdamW, get_linear_schedule_with_warmup,
-                          BertConfig, BertForMaskedLM, BertTokenizer,
-                          GPT2Config, GPT2LMHeadModel, GPT2Tokenizer,
-                          OpenAIGPTConfig, OpenAIGPTLMHeadModel, OpenAIGPTTokenizer,
-                          RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
-                          DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer)
+from torch.utils.data import Dataset
 
 class TextDataset(Dataset):
     def __init__(self, tokenizer, args, logger, file_type='train', block_size=1024):
@@ -118,7 +103,7 @@ class finetuneDataset(Dataset):
             datafile = os.path.join(args.data_dir, f"{file_type}.txt")
             if file_type == 'train':
                 logger.warning("Creating features from dataset file at %s", datafile)
-            with open(datafile) as f:
+            with open(datafile, encoding='utf-8', errors='replace') as f:
                 data = f.readlines()
 
             length = len(data)
@@ -174,7 +159,7 @@ class EvalDataset(Dataset):
             self.inputs = []
 
             datafile = os.path.join(args.data_dir, f"{file_type}.txt")
-            with open(datafile) as f:
+            with open(datafile, encoding='utf-8', errors='replace') as f:
                 data = f.readlines()
 
             length = len(data)
@@ -242,7 +227,7 @@ class EvalDataset(Dataset):
 class lineDataset(Dataset):
     def __init__(self, tokenizer, args, logger, file_type='test', block_size=924):
         datafile = os.path.join(args.data_dir, f"{file_type}_{args.mode}.json")
-        with open(datafile) as f:
+        with open(datafile, encoding='utf-8', errors='replace') as f:
             datas = f.readlines()
 
         length = len(datas)

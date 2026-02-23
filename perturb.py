@@ -69,7 +69,7 @@ def insert_unused_var_existing(code):
     # return decl + '\n' + code
 
     lines = code.splitlines()
-    idx = next((i for i, l in enumerate(lines) if re.search(rf"\b{val}\b", l)), None)
+    idx = next((i for i, l in enumerate(lines) if re.search(rf"\b{re.escape(val)}\b", l)), None)
     new_lines = lines[:idx] + [decl] + lines[idx:]
     return '\n'.join(new_lines)
 

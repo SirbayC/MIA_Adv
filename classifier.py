@@ -16,19 +16,18 @@ from sklearn.metrics import roc_auc_score, classification_report, accuracy_score
 from sklearn.preprocessing import StandardScaler
 
 
-if not os.path.exists("feature.npz"):
-    # Initialize the pre-trained embedding model (e.g., CodeBERT)
-    MODEL_NAME = "microsoft/codebert-base"
-    model = AutoModel.from_pretrained(MODEL_NAME, cache_dir='/root/.cache/huggingface/hub/')
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir='/root/.cache/huggingface/hub/')
+# Initialize the pre-trained embedding model (e.g., CodeBERT)
+MODEL_NAME = "microsoft/codebert-base"
+_cache_dir = os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub")
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = model.to(device)  # move model to GPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    codegpt_tokenizer = GPT2Tokenizer.from_pretrained("microsoft/CodeGPT-small-py", cache_dir='/root/.cache/huggingface/hub/')
-    codegpt_model = GPT2LMHeadModel.from_pretrained("microsoft/CodeGPT-small-py", cache_dir='/root/.cache/huggingface/hub/').to(device)
+model = AutoModel.from_pretrained(MODEL_NAME, cache_dir=_cache_dir).to(device)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=_cache_dir)
 
-    codegpt_model.eval()
+codegpt_tokenizer = GPT2Tokenizer.from_pretrained("microsoft/CodeGPT-small-py", cache_dir=_cache_dir)
+codegpt_model = GPT2LMHeadModel.from_pretrained("microsoft/CodeGPT-small-py", cache_dir=_cache_dir).to(device)
+codegpt_model.eval()
 
 
 class CustomMLP(nn.Module):
@@ -355,13 +354,13 @@ def stratified_split(X, y, test_size=0.5, n_samples_per_class=None, random_state
 
 def load_txt(file_path):
     """Load data from a JSON lines file."""
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
         return [line.strip() for line in f]
 
 # Load data from JSON files
 def load_json(file_path):
     """Load data from a JSON lines file."""
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
         return [json.loads(line.strip()) for line in f]
 
 

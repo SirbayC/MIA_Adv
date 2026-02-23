@@ -40,7 +40,7 @@ from transformers import (get_linear_schedule_with_warmup,
                           OpenAIGPTConfig, OpenAIGPTLMHeadModel, OpenAIGPTTokenizer,
                           RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
                           DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer,
-                          AutoModelForCausalLM, AutoTokenizer, AutoConfig, T5ForConditionalGeneration, T5Tokenizer, AutoModelWithLMHead)
+                          AutoModelForCausalLM, AutoTokenizer, AutoConfig, T5ForConditionalGeneration, T5Tokenizer)
 
 from dataset import TextDataset, finetuneDataset, EvalDataset
 
@@ -63,7 +63,7 @@ MODEL_CLASSES = {
     'starcoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'codellama': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'incoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
-    'codeparrot': (AutoConfig, AutoModelWithLMHead, AutoTokenizer),
+    'codeparrot': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'santacoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'polycoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
 }

@@ -1,6 +1,6 @@
-cd llm_finetuning
-./pipline.sh
-cd ..
+# cd llm_finetuning
+# ./pipline.sh
+# cd ..
 
 python perturb.py \
   --input_dir dataset/APPS/ \

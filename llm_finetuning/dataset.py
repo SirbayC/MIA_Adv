@@ -2,29 +2,14 @@
 # Licensed under the MIT License.
 from __future__ import absolute_import, division, print_function
 
-import argparse
-import glob
-import logging
 import os
 import pickle
-import random
-import re
 import gc
-import shutil
 import json
 
-import numpy as np
 import torch
-from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler,TensorDataset
-from torch.utils.data.distributed import DistributedSampler
+from torch.utils.data import Dataset
 from tqdm import tqdm
-
-from transformers import (WEIGHTS_NAME, AdamW, get_linear_schedule_with_warmup,
-                          BertConfig, BertForMaskedLM, BertTokenizer,
-                          GPT2Config, GPT2LMHeadModel, GPT2Tokenizer,
-                          OpenAIGPTConfig, OpenAIGPTLMHeadModel, OpenAIGPTTokenizer,
-                          RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
-                          DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer)
 
 class TextDataset(Dataset):
     def __init__(self, tokenizer, args, logger, file_type='train', block_size=1024):

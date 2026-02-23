@@ -37,13 +37,18 @@ from dataset import TextDataset, finetuneDataset, EvalDataset, lineDataset
 from beam import Beam
 
 from fuzzywuzzy import fuzz
-from transformers import (WEIGHTS_NAME, AdamW, get_linear_schedule_with_warmup,
+from tqdm import tqdm
+try:
+    from torch.optim import AdamW
+except ImportError:
+    from transformers import AdamW
+from transformers import (WEIGHTS_NAME, get_linear_schedule_with_warmup,
                           BertConfig, BertForMaskedLM, BertTokenizer,
                           GPT2Config, GPT2LMHeadModel, GPT2Tokenizer,
                           OpenAIGPTConfig, OpenAIGPTLMHeadModel, OpenAIGPTTokenizer,
                           RobertaConfig, RobertaForMaskedLM, RobertaTokenizer,
                           DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer,
-                          AutoModelForCausalLM, AutoTokenizer, AutoConfig, T5ForConditionalGeneration, T5Tokenizer, AutoModelWithLMHead)
+                          AutoModelForCausalLM, AutoTokenizer, AutoConfig, T5ForConditionalGeneration, T5Tokenizer)
 
 
 logger = logging.getLogger(__name__)
@@ -62,7 +67,7 @@ MODEL_CLASSES = {
     'starcoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'codellama': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'incoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
-    'codeparrot': (AutoConfig, AutoModelWithLMHead, AutoTokenizer),
+    'codeparrot': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'santacoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
     'polycoder': (AutoConfig, AutoModelForCausalLM, AutoTokenizer),
 }
@@ -308,7 +313,7 @@ def evaluate(args, model, tokenizer, prefix="", eval_when_training=False):
     }
 
     output_eval_file = os.path.join(eval_output_dir, prefix, "eval_results.txt")
-    with open(output_eval_file, "w") as writer:
+    with open(output_eval_file, "w", encoding="utf-8") as writer:
         #logger.info("***** Eval results {} *****".format(prefix))
         for key in sorted(result.keys()):
             #logger.info("  %s = %s", key, str(result[key]))
@@ -390,7 +395,9 @@ def eval_line_completion(args, model, tokenizer, file_type='test'):
     gts = []
     edit_sim = 0.0
     em = 0.0
-    for step, (inputs, gt) in enumerate(test_dataloader):
+    for step, (inputs, gt) in enumerate(tqdm(test_dataloader, desc="Inference", unit="sample")):
+        if args.max_infer_samples is not None and step >= args.max_infer_samples:
+            break
         inputs = inputs.to(args.device)
         with torch.no_grad():
             if args.generate_method == 'beam':
@@ -444,7 +451,7 @@ def eval_line_completion(args, model, tokenizer, file_type='test'):
     #         saved_file = os.path.join(args.output_dir, f"{file_type}_{args.pretrain_dir.split('/')[-1]}_{args.mode}}_infer.txt")
     # else:
     #     raise
-    with open(saved_file, "w") as f:
+    with open(saved_file, "w", encoding="utf-8") as f:
         for pred_text in preds:
             f.write(pred_text+"\n")
             
@@ -520,6 +527,8 @@ def main():
 
     parser.add_argument('--logging_steps', type=int, default=1000,
                         help="Log every X updates steps.")
+    parser.add_argument('--max_infer_samples', type=int, default=None,
+                        help="Limit inference to this many samples (useful for testing).")
     parser.add_argument('--save_steps', type=int, default=5000,
                         help="Save checkpoint every X updates steps.")
     parser.add_argument('--save_total_limit', type=int, default=None,
@@ -542,6 +551,8 @@ def main():
     parser.add_argument('--fp16_opt_level', type=str, default='O1',
                         help="For fp16: Apex AMP optimization level selected in ['O0', 'O1', 'O2', and 'O3']."
                              "See details at https://nvidia.github.io/apex/amp.html")
+    parser.add_argument('--bf16', action='store_true',
+                        help="Whether to use bfloat16 precision instead of 32-bit (recommended over fp16 on Ampere+ GPUs)")
     parser.add_argument("--local_rank", type=int, default=-1,
                         help="For distributed training: local_rank")
     parser.add_argument("--node_index", type=int, default=-1,
@@ -641,7 +652,8 @@ def main():
     pretrained = args.pretrain_dir
     if pretrained:
         tokenizer = tokenizer_class.from_pretrained(pretrained, do_lower_case=args.do_lower_case, sep_token='<EOL>', bos_token='<s>', eos_token='</s>', pad_token='<pad>', unk_token='<|UNKNOWN|>', additional_special_tokens=special_tokens)
-        model = model_class.from_pretrained(pretrained)
+        _dtype = torch.bfloat16 if getattr(args, 'bf16', False) else (torch.float16 if getattr(args, 'fp16', False) else None)
+        model = model_class.from_pretrained(pretrained, torch_dtype=_dtype)
         model.resize_token_embeddings(len(tokenizer))
     else:
         tokenizer = tokenizer_class.from_pretrained(args.tokenizer_dir, sep_token='<EOL>', bos_token='<s>', eos_token='</s>', pad_token='<pad>', unk_token='<|UNKNOWN|>', additional_special_tokens=special_tokens)
