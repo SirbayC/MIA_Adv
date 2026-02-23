@@ -2,14 +2,16 @@
 
 #SBATCH --job-name=CAV-MIA-AISE-research
 #SBATCH --partition=gpu-a100
-#SBATCH --time=04:00:00
+#SBATCH --time=00:30:00
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=1
 #SBATCH --gpus-per-task=1
-#SBATCH --mem-per-cpu=8000M
+#SBATCH --mem-per-cpu=3982M
 #SBATCH --account=Education-EEMCS-Courses-CSE3000
-#SBATCH --output=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/slurm-%j.out
-#SBATCH --error=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/slurm-%j.err
+#SBATCH --output=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/%j/slurm.out
+#SBATCH --error=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/%j/slurm.err
+
+# Go to dir: /scratch/cosminvasilesc/MIA-RESEARCH/MIA_Adv
 
 set -euo pipefail
 
@@ -18,9 +20,8 @@ REPO_DIR="$ROOT_DIR/MIA_Adv"
 CONDA_ENV_PATH="$ROOT_DIR/ENV"
 SANTACODER_LOCAL_MODEL_PATH="$ROOT_DIR/models/santacoder"
 
-# Create timestamped output directory for this run
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-OUTDIR="$ROOT_DIR/outputs/${TIMESTAMP}_${SLURM_JOB_ID}"
+# Create output directory for this run
+OUTDIR="$ROOT_DIR/outputs/${SLURM_JOB_ID}"
 mkdir -p "$OUTDIR"
 
 # Tee all output to a run log inside OUTDIR as well
