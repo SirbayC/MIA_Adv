@@ -29,8 +29,9 @@ scipy==1.17.1
 sympy==1.14.0
 threadpoolctl==3.6.0
 tokenizers==0.15.2
-torch==2.2.2+cu118
 tqdm==4.67.3
 transformers==4.35.2
 typing_extensions==4.15.0
 urllib3==2.6.3
+
+# pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130 # Enable gpu

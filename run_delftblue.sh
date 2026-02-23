@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=CAV-MIA-AISE-research
-#SBATCH --partition=gpu-v100
+#SBATCH --partition=gpu-a100-small
 #SBATCH --time=00:30:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
