@@ -114,7 +114,6 @@ echo "Results in: $OUTDIR"
 
 echo "Copying logs..."
 cp "$ROOT_DIR/outputs/logs/slurm-${SLURM_JOB_ID}.out" "$OUTDIR/"
-cp "$ROOT_DIR/outputs/logs/slurm-${SLURM_JOB_ID}.err" "$OUTDIR/"
 echo "Done!"
 
 echo "=========================================="

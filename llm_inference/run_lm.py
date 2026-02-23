@@ -415,6 +415,7 @@ def eval_line_completion(args, model, tokenizer, file_type='test'):
                     )
             else:
                 raise
+
             for i,pred in enumerate(p):
                 if args.generate_method == 'beam':
                     t = pred[0].cpu().numpy()
@@ -439,18 +440,9 @@ def eval_line_completion(args, model, tokenizer, file_type='test'):
                 em += 1 if text == gt[0] else 0
         if step % args.logging_steps == 0:
             logger.info(f"{step} are done!")
-    # if args.generate_method == 'beam':
-    if len(args.pretrain_dir.split('/')) >= 3:
-        saved_file = os.path.join(args.output_dir, f"{file_type}_{args.pretrain_dir.split('/')[-3]}_{args.mode}_infer.txt")
-    else:
-        saved_file = os.path.join(args.output_dir, f"{file_type}_{args.pretrain_dir.split('/')[-1]}_{args.mode}_infer.txt")
-    # elif args.generate_method == 'top-k':
-    #     if len(args.pretrain_dir.split('/')) >= 3:
-    #         saved_file = os.path.join(args.output_dir, f"{file_type}_{args.pretrain_dir.split('/')[-3]}_{args.mode}}_infer.txt")
-    #     else:
-    #         saved_file = os.path.join(args.output_dir, f"{file_type}_{args.pretrain_dir.split('/')[-1]}_{args.mode}}_infer.txt")
-    # else:
-    #     raise
+        
+    saved_file = os.path.join(args.output_dir, f"{file_type}_{args.pretrain_dir.split('/')[-1]}_{args.mode}_infer.txt")
+
     with open(saved_file, "w", encoding="utf-8") as f:
         for pred_text in preds:
             f.write(pred_text+"\n")
@@ -651,7 +643,7 @@ def main():
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     pretrained = args.pretrain_dir
     if pretrained:
-        tokenizer = tokenizer_class.from_pretrained(pretrained, do_lower_case=args.do_lower_case, sep_token='<EOL>', bos_token='<s>', eos_token='</s>', pad_token='<pad>', unk_token='<|UNKNOWN|>', additional_special_tokens=special_tokens)
+        tokenizer = tokenizer_class.from_pretrained(pretrained, do_lower_case=args.do_lower_case, sep_token='<EOL>', bos_token='<s>', eos_token='</s>', pad_token='<pad>', unk_token='<|UNKNOWN|>')
         _dtype = torch.bfloat16 if getattr(args, 'bf16', False) else (torch.float16 if getattr(args, 'fp16', False) else None)
         model = model_class.from_pretrained(pretrained, torch_dtype=_dtype)
         model.resize_token_embeddings(len(tokenizer))
