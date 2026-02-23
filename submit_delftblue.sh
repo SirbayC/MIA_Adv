@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-git add .
-git commit -m "$(date +%Y%m%d_%H%M%S)"
-git push
+if [[ -n "$(git status --porcelain)" ]]; then
+	git add .
+	git commit -m "$(date +%Y%m%d_%H%M%S)"
+	git push
+else
+	echo "No local changes; skipping commit/push."
+fi
 
 NETID="cosminvasilesc"
 REMOTE_DIR="/scratch/${NETID}/MIA-RESEARCH/MIA_Adv"
@@ -16,3 +20,4 @@ sbatch run_delftblue.sh
 EOF
 
 # RUN THIS LOCALLY!
+# Then, to see logs:  tail -f "$(ls -t | head -n 1)"
