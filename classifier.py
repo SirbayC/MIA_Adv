@@ -393,11 +393,24 @@ def set_seed(seed=42):
 
 def save_features_and_labels(true_file, false_file, true_gt_file, false_gt_file,
                              feature_path="features.npz"):
-    # （load_txt/load_json/pair_data/compute_features）
+    # Load raw text
     true_data = load_txt(true_file)
     false_data = load_txt(false_file)
-    true_gt_data = load_json(true_gt_file)[::12]
-    false_gt_data = load_json(false_gt_file)[::12]
+    
+    # Calculate the largest multiple of group_size (12) that fits in the data
+    true_valid_len = (len(true_data) // group_size) * group_size
+    false_valid_len = (len(false_data) // group_size) * group_size
+    
+    # Truncate any incomplete groups at the end
+    true_data = true_data[:true_valid_len]
+    false_data = false_data[:false_valid_len]
+
+    # Align GT length to inferred outputs before downsampling by group_size
+    true_gt_raw = load_json(true_gt_file)[:true_valid_len]
+    false_gt_raw = load_json(false_gt_file)[:false_valid_len]
+    
+    true_gt_data = true_gt_raw[::group_size]
+    false_gt_data = false_gt_raw[::group_size]
 
     member_data   = pair_data(true_data,  true_gt_data)
     non_member_data = pair_data(false_data, false_gt_data)
