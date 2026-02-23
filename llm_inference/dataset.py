@@ -236,7 +236,12 @@ class lineDataset(Dataset):
         self.gts = []
         for data in datas:
             data = json.loads(data.strip())
-            self.inputs.append(tokenizer.encode(data["input"])[-block_size:])
+            text = data["input"]
+            if text.startswith("<s> "):
+                text = text[4:]
+            if text.endswith(" </s>"):
+                text = text[:-5]
+            self.inputs.append(tokenizer.encode(text)[-block_size:])
             self.gts.append(data["gt"])
 
     def __len__(self):
