@@ -33,5 +33,7 @@ tqdm==4.67.3
 transformers==4.35.2
 typing_extensions==4.15.0
 urllib3==2.6.3
-fuzzywuzzy
-# pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu130 # Enable gpu
+
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==2.1.2+cu130
+torchvision==0.16.2+cu130

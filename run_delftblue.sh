@@ -42,8 +42,8 @@ export PYTHONUTF8=1
 conda activate "$CONDA_ENV_PATH"
 
 echo "Python:  $(which python) — $(python --version)"
-echo "PyTorch: $(python -c 'import torch; print(torch.__version__)')"
-echo "CUDA:    $(python -c 'import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else "")')"
+# echo "PyTorch: $(python -c 'import torch; print(torch.__version__)')"
+# echo "CUDA:    $(python -c 'import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else "")')"
 echo "=========================================="
 
 cd "$REPO_DIR"
