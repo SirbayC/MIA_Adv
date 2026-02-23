@@ -388,6 +388,14 @@ def eval_line_completion(args, model, tokenizer, file_type='test'):
         if args.max_infer_samples is not None and step >= args.max_infer_samples:
             break
         inputs = inputs.to(args.device)
+        
+        # Skip empty inputs (e.g., after stripping <s>/<\s>)
+        if inputs.size(1) == 0:
+            # Provide empty output for empty input
+            preds.append("")
+            gts.append(gt)
+            continue
+        
         with torch.no_grad():
             if args.generate_method == 'beam':
                 p = beam_search()
