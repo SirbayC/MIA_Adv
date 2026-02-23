@@ -20,7 +20,8 @@ CONDA_ENV_PATH="$ROOT_DIR/ENV"
 SANTACODER_LOCAL_MODEL_PATH="$ROOT_DIR/models/santacoder"
 
 # Create output directory for this run
-OUTDIR="$ROOT_DIR/outputs/runs/${SLURM_JOB_ID}"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+OUTDIR="$ROOT_DIR/outputs/runs/${TIMESTAMP}_${SLURM_JOB_ID}"
 mkdir -p "$OUTDIR"
 
 echo "=========================================="
