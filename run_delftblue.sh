@@ -16,7 +16,7 @@ set -euo pipefail
 
 ROOT_DIR="/scratch/cosminvasilesc/MIA-RESEARCH"
 REPO_DIR="$ROOT_DIR/MIA_Adv"
-CONDA_ENV_PATH="$ROOT_DIR/ENV"
+CONDA_ENV_PATH="$ROOT_DIR/ENV311"
 SANTACODER_LOCAL_MODEL_PATH="$ROOT_DIR/models/santacoder"
 
 # Create output directory for this run
