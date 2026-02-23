@@ -355,22 +355,11 @@ def eval_line_completion(args, model, tokenizer, file_type='test'):
         p = torch.cat(p, 0)
         return p
     def DecodeIds(idxs):
-        codes = ""
-        for idx in idxs:
-            to_add = tokenizer.convert_ids_to_tokens(idx)
-            if tokenizer.convert_ids_to_tokens(idx)[0] == '\u0120':
-                if not codes.endswith(" "):
-                    codes += " " + to_add[1:]
-                else:
-                    codes += to_add[1:]
-            elif (
-                idx in [tokenizer.bos_token_id, tokenizer.eos_token_id, tokenizer.sep_token_id, tokenizer.pad_token_id] or
-                tokenizer.convert_ids_to_tokens(idx).startswith("<NUM_LIT")
-            ):
-                codes += " " + to_add + " "
-            else:
-                codes += to_add
-        return codes.strip(" ")
+        return tokenizer.decode(
+            idxs,
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=True,
+        ).strip()
 
     dataset = lineDataset(tokenizer, args, logger, file_type=file_type, block_size=args.block_size-100)
     test_sampler = SequentialSampler(dataset)

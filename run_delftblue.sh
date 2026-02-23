@@ -38,6 +38,8 @@ module load miniconda3
 
 export HF_HOME="$ROOT_DIR/HF_CACHE"
 export PYTHONUTF8=1
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
 
 conda activate "$CONDA_ENV_PATH"
 
