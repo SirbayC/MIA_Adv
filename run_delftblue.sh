@@ -8,16 +8,16 @@
 #SBATCH --gpus-per-task=1
 #SBATCH --mem-per-cpu=8000M
 #SBATCH --account=Education-EEMCS-Courses-CSE3000
-#SBATCH --output=/scratch/cosminvasilesc/MIA-RESEARCH/outputs/logs/slurm-%j.out
+#SBATCH --output=/scratch/cosminvasilesc/MIA-ADV/outputs/logs/slurm-%j.out
 
-# Go to dir: /scratch/cosminvasilesc/MIA-RESEARCH/MIA_Adv
+# Go to dir: /scratch/cosminvasilesc/MIA-ADV/MIA_Adv
 
 set -euo pipefail
 
-ROOT_DIR="/scratch/cosminvasilesc/MIA-RESEARCH"
+ROOT_DIR="/scratch/cosminvasilesc/MIA-ADV"
 REPO_DIR="$ROOT_DIR/MIA_Adv"
-CONDA_ENV_PATH="$ROOT_DIR/ENV311"
-SANTACODER_LOCAL_MODEL_PATH="$ROOT_DIR/models/santacoder"
+CONDA_ENV_PATH="$ROOT_DIR/ENV"
+HF_CACHE_DIR="/scratch/cosminvasilesc/HF_CACHE"
 
 # Create output directory for this run
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
@@ -36,9 +36,8 @@ echo "=========================================="
 module purge
 module load miniconda3
 
-export HF_HOME="$ROOT_DIR/HF_CACHE"
+export HF_HOME="$HF_CACHE_DIR"
 export PYTHONUTF8=1
-export TRANSFORMERS_OFFLINE=1
 export HF_HUB_OFFLINE=1
 
 conda activate "$CONDA_ENV_PATH"
@@ -76,7 +75,7 @@ python -u run_lm.py \
   --lit_file=./literals.json \
   --langs=python \
   --output_dir="$OUTDIR" \
-  --pretrain_dir="$SANTACODER_LOCAL_MODEL_PATH" \
+  --pretrain_dir="bigcode/santacoder" \
   --log_file="$OUTDIR/inference.log" \
   --model_type=santacoder \
   --block_size=1024 \
@@ -86,6 +85,7 @@ python -u run_lm.py \
   --generate_method=top-k \
   --topk=50 \
   --temperature=0.8 \
+  --max_infer_samples=100 \
   --bf16
 
 cd "$REPO_DIR"
