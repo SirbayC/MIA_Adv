@@ -10,7 +10,7 @@ else
 fi
 
 NETID="cosminvasilesc"
-REMOTE_DIR="/scratch/${NETID}/MIA-RESEARCH/MIA_Adv"
+REMOTE_DIR="/scratch/${NETID}/MIA-ADV/MIA_Adv"
 
 ssh delftblue << EOF
 set -euo pipefail
