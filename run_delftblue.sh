@@ -10,7 +10,10 @@
 #SBATCH --account=Education-EEMCS-Courses-CSE3000
 #SBATCH --output=/scratch/cosminvasilesc/MIA-ADV/outputs/logs/slurm-%j.out
 
-# Go to dir: /scratch/cosminvasilesc/MIA-ADV/MIA_Adv
+# PREFLIGHT CHECKS:
+# - time
+# - partition
+# - limit inference ? --max_infer_samples=100 \
 
 set -euo pipefail
 
